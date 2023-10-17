@@ -10,6 +10,7 @@ import time
 import csv
 from tensorflow import keras
 from tensorflow.keras import layers
+import numpy as np
 
 matplotlib.use('Agg')
 
@@ -179,7 +180,7 @@ def generateresult():
     return render_template("generateVoice.html")
 
 def is_weekday(timestamp):
-    date = datetime.fromtimestamp(timestamp / 1000)
+    date = datetime.datetime.fromtimestamp(timestamp / 1000)
     weekday = date.weekday()
     if 0 <= weekday < 5:
         return 1
@@ -218,7 +219,7 @@ def predict_congestion(road_id):
     # 以每5分钟为间隔，从当前时间开始到当前时间加一小时，创建时间戳
     current_time = datetime.datetime.now()
     start_time = current_time
-    end_time = current_time + timedelta(hours=1)
+    end_time = current_time + datetime.timedelta(hours=1)
     time_stamps = pd.date_range(start=start_time, end=end_time, freq='5T')
 
     prediction_data = pd.DataFrame({'timestamp': time_stamps, 'road_id': road_id})
@@ -227,6 +228,7 @@ def predict_congestion(road_id):
 
     X_predict = prediction_data[['hour', 'minute', 'road_id']]
     X_predict = X_predict.values.reshape(-1, 3, 1)
+    X_predict = np.asarray(X_predict).astype(np.int32)
     loaded_model = keras.models.load_model('trained_RNN_model.h5')
     predicted_probabilities = loaded_model.predict(X_predict)
 
