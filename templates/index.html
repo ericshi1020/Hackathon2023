@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotificationPage</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.min.css"/>
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename ='VoiceDictation/css/base.css')}}" />
+
+    <style>
+        body{
+            margin-top:20px;
+            background:#F0F8FF;
+        }
+        .card {
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 15px 1px rgba(52,40,104,.08);
+        }
+        .card {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid #e5e9f2;
+            border-radius: .2rem;
+        }
+        .card-header:first-child {
+            border-radius: calc(.2rem - 1px) calc(.2rem - 1px) 0 0;
+        }
+        .card-header {
+            border-bottom-width: 1px;
+        }
+        .card-header {
+            padding: .75rem 1.25rem;
+            margin-bottom: 0;
+            color: inherit;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e9f2;
+        }
+    </style>
+</head>
+<body>
+<iframe id="myIframe" style="display: none" name="myIframe"></iframe>
+  <div class="container p-0" style="max-width: 80%">
+    <h1 class="h3 mb-3">Settings</h1>
+    <button onclick="refresh()" style="margin-right: 10px">refresh</button>
+    <div class="row">
+      <div class="col-md-7 col-xl-8">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" role="tabpanel">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-actions float-right">
+                  <div class="dropdown show">
+                    <a href="#" data-toggle="dropdown" data-display="static">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                      </svg>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item" onclick="switchCard(1);">User Info</a>
+                      <a class="dropdown-item" onclick="switchCard(2);">Car Info</a>
+                    </div>
+                  </div>
+                </div>
+                <h5 class="card-title mb-0 user-info-card">User info</h5>
+                <h5 class="card-title mb-0 car-info-card" >Car info</h5>
+              </div>
+              <div class="card-body user-info-card">
+                <div class="row">
+                  <form class="col-md-6" id="userForm" method="post" action="update_person_info" target="myIframe">
+                    <div class="col-md-12">
+                      <table class="display dataTable col-md-12" aria-describedby="example_info">
+                        <thead>
+                          <tr>
+                            <th class="sorting sorting_asc col-md-4" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" >Field</th>
+                            <th class="sorting_disabled col-md-8" rowspan="1" colspan="1">Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr >
+                            <td >User Id</td>
+                            <td>
+                              <input type="text" id="personId" name="personId" >
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >User Name</td>
+                            <td>
+                              <input type="text" id="personName" name="personName">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Mobile Number</td>
+                            <td>
+                              <input type="text" id="mobileNumber" name="mobile">
+                            </td>
+                          </tr><tr >
+                            <td >Headlight Degree</td>
+                            <td>
+                              <input type="text" id="headlightDegree" name="headlightDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Left Mirror Degree X</td>
+                            <td>
+                              <input type="text" id="mirrorLeftXDegree" name="mirrorLeftXDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Left Mirror Degree Y</td>
+                            <td>
+                              <input type="text" id="mirrorLeftYDegree" name="mirrorLeftYDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Right Mirror Degree X</td>
+                            <td>
+                              <input type="text" id="mirrorRightXDegree" name="mirrorRightXDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Right Mirror Degree Y</td>
+                            <td>
+                              <input type="text" id="mirrorRightYDegree" name="mirrorRightYDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat X Length</td>
+                            <td>
+                              <input type="text" id="seatX" name="seatX">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat Y Length</td>
+                            <td>
+                              <input type="text" id="seatY" name="seatY">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat Back Degree</td>
+                            <td>
+                              <input type="text" id="seatBackDegree" name="seatBackDegree">
+                            </td>
+                          </tr>
+
+                        </tbody>
+                      </table>
+                    </div>
+                    <button onclick="pInfoSubmit()" type="submit" class="btn btn-primary">Save changes</button>
+                  </form>
+                    <form class="col-md-6" id="carForm" method="post" action="update_car_info" target="myIframe">
+                    <div class="col-md-12">
+                      <table class="display dataTable col-md-12" aria-describedby="example_info">
+                        <thead>
+                          <tr>
+                            <th class="sorting sorting_asc col-md-4" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" >Field</th>
+                            <th class="sorting_disabled col-md-8" rowspan="1" colspan="1">Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr >
+                            <td >Car Id</td>
+                            <td>
+                              <input type="text" id="carId" name="carId" >
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Car Type</td>
+                            <td>
+                              <input type="text" id="carType" name="carType">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Running Mode</td>
+                            <td>
+                              <input type="text" id="runningMode" name="runningMode">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Left Mirror Degree X</td>
+                            <td>
+                              <input type="text" id="carMirrorLeftXDegree" name="carMirrorLeftXDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Left Mirror Degree Y</td>
+                            <td>
+                              <input type="text" id="carMirrorLeftYDegree" name="carMirrorLeftYDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Right Mirror Degree X</td>
+                            <td>
+                              <input type="text" id="carMirrorRightXDegree" name="carMirrorRightXDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Right Mirror Degree Y</td>
+                            <td>
+                              <input type="text" id="carMirrorRightYDegree" name="carMirrorRightYDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat X Length</td>
+                            <td>
+                              <input type="text" id="carLeftSeatX" name="carLeftSeatX">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat Y Length</td>
+                            <td>
+                              <input type="text" id="carLeftSeatY" name="carLeftSeatY">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat Back Degree</td>
+                            <td>
+                              <input type="text" id="carLeftSeatBackDegree" name="carLeftSeatBackDegree">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Seat Heating Switch</td>
+                            <td>
+                              <input type="text" id="leftSeatHeatingSwitch" name="leftSeatHeatingSwitch">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Air Condition Switch</td>
+                            <td>
+                              <input type="text" id="airConditionSwitch" name="airConditionSwitch">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Air Condition Mode</td>
+                            <td>
+                              <input type="text" id="airConditionMode" name="airConditionMode">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Air Condition Temp</td>
+                            <td>
+                              <input type="text" id="airConditionTemp" name="airConditionTemp">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Air Outlet Position</td>
+                            <td>
+                              <input type="text" id="airOutletPosition" name="airOutletPosition">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Air Speed</td>
+                            <td>
+                              <input type="text" id="airSpeed" name="airSpeed">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Clean Mode</td>
+                            <td>
+                              <input type="text" id="cleanMode" name="cleanMode">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >In Out Cycle</td>
+                            <td>
+                              <input type="text" id="inOutCycle" name="inOutCycle">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Fog Light Switch</td>
+                            <td>
+                              <input type="text" id="fogLightSwitch" name="fogLightSwitch">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Head Lights Switch</td>
+                            <td>
+                              <input type="text" id="headlightsSwitch" name="headlightsSwitch">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Head Lights Degree</td>
+                            <td>
+                              <input type="text" id="headlightsDegree" name="headlightsDegree">
+                            </td>
+                          </tr>
+
+                          <tr >
+                            <td >Navigator Switch</td>
+                            <td>
+                              <input type="text" id="navigatorSwitch" name="navigatorSwitch">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Navigator Mode</td>
+                            <td>
+                              <input type="text" id="navigatorMode" name="navigatorMode">
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <button onclick="pInfoSubmit()" type="submit" class="btn btn-primary">Save changes</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Parameters</h5>
+                    <table class="display dataTable col-md-12" aria-describedby="example_info">
+                        <thead>
+                          <tr>
+                            <th class="sorting sorting_asc col-md-4" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" >Field</th>
+                            <th class="sorting_disabled col-md-8" rowspan="1" colspan="1">Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr >
+                            <td >Weather</td>
+                            <td>
+                              <input type="text" id="weather" name="weather" value="1">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Air Quality</td>
+                            <td>
+                              <input type="text" id="airQuality" name="airQuality" value="1">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Brightness</td>
+                            <td>
+                              <input type="text" id="brightness" name="brightness" value="1">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Temp Outside</td>
+                            <td>
+                              <input type="text" id="tempOutside" name="tempOutside" value="20">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Temp Inside</td>
+                            <td>
+                              <input type="text" id="tempInside" name="tempInside" value="24">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Road Id</td>
+                            <td>
+                              <input type="text" id="roadId" name="roadId" value="1">
+                            </td>
+                          </tr>
+                          <tr >
+                            <td >Traffic Condition</td>
+                            <td>
+                              <input type="text" id="trafficCondition" name="trafficCondition" value="1">
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    <button onclick="getNotification()" type="button" class="btn btn-primary">Update</button>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="col-md-5 col-xl-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Recommendation</h5>
+            </div>
+            <div class="list-group list-group-flush" role="tablist" id="notify_list"></div>
+          </div>
+</div>
+    </div>
+  </div>
+    <section class="fixed-box" id="fixed-box">
+        <div class="fixed-main">
+            <button class="fixed-close" id="close-btn"></button>
+            <div id="fixed-txt">Please say what you want ！</div>
+            <div class="fixed-icon">
+                <img src="{{ url_for('static', filename ='VoiceDictation/img/voice.png')}}" alt="" />
+            </div>
+        </div>
+    </section>
+</body>
+
+<script src="{{ url_for('static', filename ='VoiceDictation/js/crypto-js.min.js') }}"></script>
+<script src="{{ url_for('static', filename ='VoiceDictation/js/voice.js') }}"></script>
+<script type="application/javascript">
+    var serverhost = "http://127.0.0.1:2020";
+    var personId = {{ data }}
+    //var personId = 2
+
+    var categoryMap = [
+        {
+            "id":"1",
+            "category":"air",
+            "description":"Air Condition"
+        },
+        {
+            "id":"2",
+            "category":"env",
+            "description":"Enviroment"
+        },
+        {
+            "id":"3",
+            "category":"chair",
+            "description":"Chair"
+        },
+        {
+            "id":"4",
+            "category":"traffic",
+            "description":"Traffic"
+        },
+        {
+            "id":"5",
+            "category":"electric",
+            "description":"Electric"
+        }
+    ]
+
+    var messageMap = [
+        {
+            "id":"1",
+            "category":"air",
+            "notification":"Whether to turn on the internal circulation when poor air quality outside the vehicle is detected ?"
+        },
+        {
+            "id":"2",
+            "category":"air",
+            "notification":"Whether to turn on the air purification when poor air quality is detected in the car ?"
+        },
+        {
+            "id":"3",
+            "category":"env",
+            "notification":"Whether to turn on the seat heating when low outside temperature is detected ?"
+        },
+        {
+            "id":"4",
+            "category":"env",
+            "notification":"Whether to turn on the air conditioner when the outside temperature is detected to be low ?"
+        },
+        {
+            "id":"5",
+            "category":"env",
+            "notification":"It is dark outside the car , turn the lights on?"
+        },
+        {
+            "id":"6",
+            "category":"env",
+            "notification":"It's foggy today. Please turn on your fog lights ."
+        },
+        {
+            "id":"7",
+            "category":"chair",
+            "notification":"Your heated seats are taking too long .Would you want to turn off ?"
+        },
+        {
+            "id":"8",
+            "category":"traffic",
+            "notification":"Congestion ahead, whether to turn on the navigation ?"
+        },
+        {
+            "id":"9",
+            "category":"traffic",
+            "notification":"It's a work day, is it navigating to the office ?"
+        },
+        {
+            "id":"10",
+            "category":"traffic",
+            "notification":"You're off duty. Are you navigating home ?"
+        },
+        {
+            "id":"11",
+            "category":"traffic",
+            "notification":"You've never been to this place before. Is it on detail mode?"
+        },
+        {
+            "id":"12",
+            "category":"traffic",
+            "notification":"This place is a bit far away. Is it on detail mode ?"
+        },
+        {
+            "id":"13",
+            "category":"electric",
+            "notification":"Vehicle power is low, whether to turn on the power saving mode ?"
+        },
+        {
+            "id":"14",
+            "category":"env",
+            "notification":"Does it automatically adjust the air conditioning temperature when it detects a large temperature difference between the inside and outside of the vehicle, which is prone to fogging and causing an obstructed view ?"
+        }
+    ]
+
+    var confirmWords = ["OK","YES","SURE"]
+
+    $(function(){
+        switchCard(1);
+
+
+      setInterval(function () {
+        $.get(serverhost + "/get_recent_person_id", function (data) {
+            console.log("recent person = "+ data)
+            if(personId != data){
+                personId = data;
+                getCarInfo();
+                getPersonInfo();
+                getNotification();
+            }
+        })
+
+    },1000)
+
+        getCarInfo();
+        getPersonInfo();
+        getNotification();
+
+
+    })
+
+    function refresh(){
+        alert("refresh");
+        getCarInfo();
+        getPersonInfo();
+    }
+
+    /**
+     * {
+        "headlight_degree": 75,
+        "id": "2",
+        "mirror_left_x_degree": 0,
+        "mirror_left_y_degree": 90,
+        "mirror_right_x_degree": 0,
+        "mirror_right_y_degree": 90,
+        "mobile_phone": "15012345678",
+        "name": "Eric",
+        "seat_back_degree": 70,
+        "seat_x": 50,
+        "seat_z": 15
+    }
+     */
+    function getPersonInfo(){
+        $.get(serverhost + "/get_person_info/"+personId, function (data) {
+            if (!data) {
+                alert("Can not get person info");
+            }
+            $("#personId").val(data.id);
+            $("#personName").val(data.name);
+            $("#mobileNumber").val(data.mobile_phone);
+            $("#headlightDegree").val(data.headlight_degree);
+            $("#seatX").val(data.seat_x);
+            $("#seatY").val(data.seat_z);
+            $("#seatBackDegree").val(data.seat_back_degree);
+            $("#mirrorLeftXDegree").val(data.mirror_left_x_degree);
+            $("#mirrorLeftYDegree").val(data.mirror_left_y_degree);
+            $("#mirrorRightXDegree").val(data.mirror_right_x_degree);
+            $("#mirrorRightYDegree").val(data.mirror_right_y_degree);
+
+            updateCarInfoByUserSettings(data);
+
+        })
+    }
+
+    function updateCarInfoByUserSettings(data){
+        $("#carLeftSeatX").val(data.seat_x);
+        $("#carLeftSeatY").val(data.seat_z);
+        $("#carLeftSeatBackDegree").val(data.seat_back_degree);
+        $("#carMirrorLeftXDegree").val(data.mirror_left_x_degree);
+        $("#carMirrorLeftYDegree").val(data.mirror_left_y_degree);
+        $("#carMirrorRightXDegree").val(data.mirror_right_x_degree);
+        $("#carMirrorRightYDegree").val(data.mirror_right_y_degree);
+        $("#headlightsDegree").val(data.headlight_degree);
+
+        $("#carForm").submit();
+    }
+
+    /**
+     * {
+        "air_condition_mode": 1,
+        "air_condition_switch": 1,
+        "air_outlet_position": 1,
+        "air_speed": 1,
+        "car_id": 1,
+        "clean_mode": 0,
+        "in_out_cycle": 1,
+        "left_seat_back_degree": 75,
+        "left_seat_heating_on_time": null,
+        "left_seat_heating_switch": 0,
+        "left_seat_x": 0,
+        "left_seat_z": 0,
+        "mirror_left_x_degree": 0,
+        "mirror_left_y_degree": 0,
+        "mirror_right_x_degree": 0,
+        "mirror_right_y_degree": 0,
+        "right_seat_back_degree": 75,
+        "right_seat_heating_on_time": null,
+        "right_seat_heating_switch": 0,
+        "right_seat_x": 0,
+        "right_seat_z": null,
+        "running_mode": 1,
+        "temp": 20,
+        "total_running_length": 10000,
+        "type": 1
+    }
+     */
+    function getCarInfo(){
+        $.get(serverhost + "/get_car_info_by_person_id/"+personId, function (data) {
+            if (!data) {
+                alert("Can not get car info by person id");
+            }
+
+            $("#carId").val(data.car_id);
+            $("#carType").val(data.type);
+            $("#runningMode").val(data.running_mode);
+            $("#carLeftSeatX").val(data.left_seat_x);
+            $("#carLeftSeatY").val(data.left_seat_z);
+            $("#carLeftSeatBackDegree").val(data.left_seat_back_degree);
+            $("#leftSeatHeatingSwitch").val(data.left_seat_heating_switch);
+            $("#carLeftSeatHeatingOnTime").val(data.left_seat_heating_on_time);
+            $("#carMirrorLeftXDegree").val(data.mirror_left_x_degree);
+            $("#carMirrorLeftYDegree").val(data.mirror_left_y_degree);
+            $("#carMirrorRightXDegree").val(data.mirror_right_x_degree);
+            $("#carMirrorRightYDegree").val(data.mirror_right_y_degree);
+            $("#airConditionSwitch").val(data.air_condition_switch);
+            $("#airConditionMode").val(data.air_condition_mode);
+            $("#airConditionTemp").val(data.temp);
+            $("#airOutletPosition").val(data.air_outlet_position);
+            $("#airSpeed").val(data.air_speed);
+            $("#cleanMode").val(data.clean_mode);
+            $("#inOutCycle").val(data.in_out_cycle);
+            $("#fogLightSwitch").val(data.fog_light_switch);
+            $("#headlightsSwitch").val(data.headlights_switch);
+            $("#headlightsDegree").val(data.headlights_degree);
+
+            $("#navigatorMode").val(data.navigator_mode);
+            $("#navigatorSwitch").val(data.navigator_switch);
+        })
+    }
+
+    function getNotification(){
+
+
+        var weather = $("#weather").val();
+        var brightness = $("#brightness").val();
+        var tempOutside = $("#tempOutside").val();
+        var tempInside = $("#tempInside").val();
+        var roadId = $("#roadId").val();
+        var trafficCondition = $("#trafficCondition").val();
+        var airQuality = $("#airQuality").val();
+
+        var data = {
+            "person_id":personId,
+            "air_quality":airQuality,
+            "road_id":roadId,
+            "brightness":brightness,
+            "temperature_inside":tempInside,
+            "temperature_outside":tempOutside,
+            "weather":weather,
+            "traffic_condition":trafficCondition
+
+        }
+
+
+        $.ajax({
+          type: "POST",
+          url: serverhost + "/get_person_notify",
+          data: data,
+          success: function (result) {
+              if(!result){
+                alert("Can not get notify info");
+            }
+            var html = "";
+            for(var i = 0;i<result.length;i++){
+                if(i == 0 ){
+                    html += '<a class="list-group-item list-group-item-action active" data-toggle="list" role="tab" onclick="readMessage('+result[i]+')"> '+getMessageById(result[i]).notification+' </a>';
+                } else {
+                    html += '<a class="list-group-item list-group-item-action " data-toggle="list" role="tab" onclick="readMessage('+result[i]+')"> '+getMessageById(result[i]).notification+' </a>';
+                }
+            }
+
+            $("#notify_list").html(html);
+          },
+          dataType: "json"
+        });
+    }
+
+    function getMessageByCategory(categoryId){
+        var messageArray = []
+        for(var i = 0;i<categoryMap.length;i++){
+            if(categoryMap[i].id == categoryId){
+                messageArray.push(categoryMap[i])
+            }
+        }
+        return messageArray;
+    }
+
+    function getMessageById(messageId){
+        for(var i = 0;i<messageMap.length;i++){
+            if(messageMap[i].id == messageId){
+                return messageMap[i]
+            }
+        }
+    }
+
+    function switchCard(index){
+        if(index == 1){
+            $(".car-info-card").hide()
+            $(".user-info-card").show()
+        }else{
+            $(".user-info-card").hide()
+            $(".car-info-card").show()
+        }
+    }
+
+    function readMessage(messageId){
+
+        console.log('http://localhost:8000/voice/'+messageId+'.wav')
+        var audioElement = document.createElement('audio');
+        audioElement.setAttribute('src', 'http://localhost:8000/voice/'+messageId+'.wav');
+        audioElement.play();
+
+
+        const fixedBox = document.querySelector('#fixed-box');
+        const fixedTxt = document.querySelector('#fixed-txt');
+        audioElement.addEventListener('ended', function() {
+            let times = null;
+
+            const voice = new Voice({
+
+                // 服务接口认证信息 注：apiKey 和 apiSecret 的长度都差不多，请要填错哦，！
+                appId: '8608c97f',
+                apiSecret: 'MzAzYTY5MjJmZWQ0MmM1YjIwODBiNGRi',
+                apiKey: 'b30ba135f89c685f97e2745fea6253b9',
+                // 注：要获取以上3个参数，请到迅飞开放平台：https://www.xfyun.cn/services/voicedictation 【注：这是我的迅飞语音听写（流式版）每天服务量500（也就是调500次），如果你需求里大请购买服务量：https://www.xfyun.cn/services/voicedictation?target=price】
+
+                onWillStatusChange: function (oldStatus, newStatus) {
+                    //可以在这里进行页面中一些交互逻辑处理：注：倒计时（语音听写只有60s）,录音的动画，按钮交互等！
+                    fixedBox.style.display = 'block';
+                },
+                onTextChange: function (text) {
+                    //监听识别结果的变化
+                    //voiceTxt.value = text;
+                    fixedTxt.innerText = text;
+
+                    if(confirmWords.indexOf(text.trim().toUpperCase()) > -1){
+                        confirmAction(messageId);
+                    }
+
+                    // 3秒钟内没有说话，就自动关闭
+                    if (text) {
+                        clearTimeout(times);
+                        times = setTimeout(() => {
+                            this.stop(); // voice.stop();
+                            fixedBox.style.display = 'none';
+                        }, 2000);
+                    };
+                }
+            });
+
+            // 开始识别
+            voice.start();
+
+            // 关闭识别
+            closeBtn['onclick'] = function () {
+                voice.stop();
+                fixedBox.style.display = 'none';
+            };
+        }, false);
+        //const voiceTxt = document.querySelector('#voice-txt');
+
+    }
+
+    function confirmAction(messageId){
+        if(messageId == 1){
+            $("#inOutCycle").val(1);
+        }else if(messageId == 2){
+            $("#cleanMode").val(1);
+            $("#inOutCycle").val(1);
+        }else if(messageId == 3){
+            $("#leftSeatHeatingSwitch").val(1);
+        }else if(messageId == 4){
+            $("#airConditionSwitch").val(1);
+            $("#airConditionMode").val(1);
+        }else if(messageId == 5){
+            $("#headlightsSwitch").val(1);
+        }else if(messageId == 6){
+            $("#fogLightSwitch").val(1);
+        }else if(messageId == 7){
+            $("#leftSeatHeatingSwitch").val(0);
+        }else if(messageId == 8){
+            $("#navigatorMode").val(1);
+            $("#navigatorSwitch").val(1);
+        }else if(messageId == 9){
+            $("#navigatorSwitch").val(1);
+        }else if(messageId == 10){
+            $("#navigatorSwitch").val(1);
+        }else if(messageId == 11){
+            $("#navigatorMode").val(1);
+            $("#navigatorSwitch").val(1);
+        }else if(messageId == 12){
+            $("#navigatorMode").val(1);
+            $("#navigatorSwitch").val(1);
+        }else if(messageId == 13){
+            $("#runningMode").val(2);
+        }else if(messageId == 14){
+
+            var tempOutside = $("#tempOutside").val();
+            $("#airConditionTemp").val(tempOutside);
+        }
+
+        $("#carForm").submit();
+
+        setTimeout(function () {
+            refresh();
+        },1000)
+
+    }
+
+    function pInfoSubmit(){
+
+        $( "#myIframe" ).css("display", "block");
+
+      }
+</script>
+</html>
