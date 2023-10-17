@@ -4,9 +4,12 @@ import webbrowser
 import matplotlib
 from facerecognition_opencv import face_detection
 import datetime
+import timedelta
 import pandas as pd
 import time
 import csv
+from tensorflow import keras
+from tensorflow.keras import layers
 
 matplotlib.use('Agg')
 
@@ -129,8 +132,12 @@ def getPersonalNotify():
 
 
      # traffic
-     if request.form.get('traffic_condition') == 2 and carInfo['navigator_switch'] == 0:
+     # use model train data
+     if predict_congestion(request.form.get('road_id')) or request.form.get('traffic_condition') == 2 and carInfo[
+         'navigator_switch'] == 0:
          result.append(8)
+     # if request.form.get('traffic_condition') == 2 and carInfo['navigator_switch'] == 0:
+     #     result.append(8)
 
      # open navigation when work day
      if not is_off_work(timestamp) and is_weekday(timestamp) == 1 and carInfo['navigator_switch'] == 0:
@@ -205,3 +212,28 @@ def insertOneRowIntoExcel(data):
         csv_writer=csv.writer(demo1)
         # appending data
         csv_writer.writerow(data)
+
+def predict_congestion(road_id):
+    # 创建待预测数据集
+    # 以每5分钟为间隔，从当前时间开始到当前时间加一小时，创建时间戳
+    current_time = datetime.datetime.now()
+    start_time = current_time
+    end_time = current_time + timedelta(hours=1)
+    time_stamps = pd.date_range(start=start_time, end=end_time, freq='5T')
+
+    prediction_data = pd.DataFrame({'timestamp': time_stamps, 'road_id': road_id})
+    prediction_data['hour'] = prediction_data['timestamp'].dt.hour
+    prediction_data['minute'] = prediction_data['timestamp'].dt.minute
+
+    X_predict = prediction_data[['hour', 'minute', 'road_id']]
+    X_predict = X_predict.values.reshape(-1, 3, 1)
+    loaded_model = keras.models.load_model('trained_RNN_model.h5')
+    predicted_probabilities = loaded_model.predict(X_predict)
+
+    # 定义阈值，大于该阈值表示拥堵
+    threshold = 0.1
+
+    # 根据阈值分析预测结果
+    is_congested = any(predicted_probabilities > threshold)
+
+    return is_congested
