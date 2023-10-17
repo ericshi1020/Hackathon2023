@@ -44,8 +44,8 @@ def faceRecognition(dirPath) -> int:
             label, confidence = recognizer.predict(gray[y:y + h, x:x + w])
             print(
                 """
-                标签：%d
-                可信度：%d
+                Label：%d
+                Confidence：%d
                 """ % (label, confidence)
             )
 
